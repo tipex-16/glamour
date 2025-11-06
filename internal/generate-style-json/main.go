@@ -27,7 +27,7 @@ func writeStyleJSON(filename string, styleConfig *ansi.StyleConfig) error {
 
 func run() error {
 	for style, styleConfig := range styles.DefaultStyles {
-		if err := writeStyleJSON(filepath.Join("styles", style+".json"), styleConfig); err != nil {
+		if err := writeStyleJSON(filepath.Join(style+".json"), styleConfig); err != nil {
 			return err
 		}
 	}
