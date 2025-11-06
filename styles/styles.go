@@ -235,8 +235,8 @@ var (
 		},
 		Code: ansi.StyleBlock{
 			StylePrimitive: ansi.StylePrimitive{
-				Prefix:          " ",
-				Suffix:          " ",
+				Prefix:          "\u00a0", // Use non-breaking space to prevent hard breaks
+				Suffix:          "\u00a0", // Use non-breaking space to prevent hard breaks
 				Color:           stringPtr("203"),
 				BackgroundColor: stringPtr("236"),
 			},
@@ -444,8 +444,8 @@ var (
 		},
 		Code: ansi.StyleBlock{
 			StylePrimitive: ansi.StylePrimitive{
-				Prefix:          " ",
-				Suffix:          " ",
+				Prefix:          "\u00a0", // Use non-breaking space to prevent hard breaks
+				Suffix:          "\u00a0", // Use non-breaking space to prevent hard breaks
 				Color:           stringPtr("203"),
 				BackgroundColor: stringPtr("254"),
 			},
@@ -644,8 +644,8 @@ var (
 			StylePrimitive: ansi.StylePrimitive{
 				Color:           stringPtr("212"),
 				BackgroundColor: stringPtr("236"),
-				Prefix:          " ",
-				Suffix:          " ",
+				Prefix:          "\u00a0", // Use non-breaking space to prevent hard breaks
+				Suffix:          "\u00a0", // Use non-breaking space to prevent hard breaks
 			},
 		},
 		Table:          ansi.StyleTable{},
