@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/charmbracelet/lipgloss/v2"
-	"github.com/charmbracelet/lipgloss/v2/table"
+	"charm.land/lipgloss/v2"
+	"charm.land/lipgloss/v2/table"
 	astext "github.com/yuin/goldmark/extension/ast"
 )
 

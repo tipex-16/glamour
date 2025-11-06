@@ -6,7 +6,7 @@ import (
 	"io"
 	"strings"
 
-	"github.com/charmbracelet/x/cellbuf"
+	"charm.land/lipgloss/v2"
 )
 
 // A ParagraphElement is used to render individual paragraphs.
@@ -45,7 +45,7 @@ func (e *ParagraphElement) Finish(w io.Writer, ctx RenderContext) error {
 		if !ctx.options.PreserveNewLines {
 			blk = strings.ReplaceAll(blk, "\n", " ")
 		}
-		flow := cellbuf.Wrap(blk, int(bs.Width(ctx)), "") //nolint: gosec
+		flow := lipgloss.Wrap(blk, int(bs.Width(ctx)), "") //nolint: gosec
 
 		_, err := io.WriteString(mw, flow)
 		if err != nil {

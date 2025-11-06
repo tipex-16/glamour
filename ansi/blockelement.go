@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/charmbracelet/x/cellbuf"
+	"charm.land/lipgloss/v2"
 )
 
 // BlockElement provides a render buffer for children of a block element.
@@ -33,7 +33,7 @@ func (e *BlockElement) Finish(w io.Writer, ctx RenderContext) error {
 	bs := ctx.blockStack
 
 	if e.Margin { //nolint: nestif
-		s := cellbuf.Wrap(
+		s := lipgloss.Wrap(
 			bs.Current().Block.String(),
 			int(bs.Width(ctx)), //nolint: gosec
 			" ,.;-+|",

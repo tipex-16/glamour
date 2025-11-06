@@ -7,8 +7,8 @@ import (
 	"io"
 	"strings"
 
+	"charm.land/lipgloss/v2"
 	"github.com/charmbracelet/x/ansi"
-	"github.com/charmbracelet/x/cellbuf"
 )
 
 // MarginWriter is a Writer that applies indentation and padding around
@@ -44,7 +44,7 @@ func NewMarginWriter(ctx RenderContext, w io.Writer, rules StyleBlock) *MarginWr
 	})
 
 	return &MarginWriter{
-		w:  cellbuf.NewPenWriter(w),
+		w:  lipgloss.NewWrapWriter(w),
 		iw: iw,
 	}
 }
@@ -74,7 +74,7 @@ type PaddingFunc = func(w io.Writer)
 type PaddingWriter struct {
 	Padding int
 	PadFunc PaddingFunc
-	w       *cellbuf.PenWriter
+	w       *lipgloss.WrapWriter
 	cache   bytes.Buffer
 }
 
@@ -83,7 +83,7 @@ func NewPaddingWriter(w io.Writer, padding int, padFunc PaddingFunc) *PaddingWri
 	return &PaddingWriter{
 		Padding: padding,
 		PadFunc: padFunc,
-		w:       cellbuf.NewPenWriter(w),
+		w:       lipgloss.NewWrapWriter(w),
 	}
 }
 
@@ -133,7 +133,7 @@ type IndentWriter struct {
 	Indent     int
 	IndentFunc PaddingFunc
 	w          io.Writer
-	pw         *cellbuf.PenWriter
+	pw         *lipgloss.WrapWriter
 	skipIndent bool
 }
 
@@ -142,7 +142,7 @@ func NewIndentWriter(w io.Writer, indent int, indentFunc IndentFunc) *IndentWrit
 	return &IndentWriter{
 		Indent:     indent,
 		IndentFunc: indentFunc,
-		pw:         cellbuf.NewPenWriter(w),
+		pw:         lipgloss.NewWrapWriter(w),
 		w:          w,
 	}
 }
@@ -150,10 +150,10 @@ func NewIndentWriter(w io.Writer, indent int, indentFunc IndentFunc) *IndentWrit
 func (w *IndentWriter) resetPen() {
 	style := w.pw.Style()
 	link := w.pw.Link()
-	if !style.Empty() {
+	if !style.IsZero() {
 		_, _ = io.WriteString(w.w, ansi.ResetStyle)
 	}
-	if !link.Empty() {
+	if !link.IsZero() {
 		_, _ = io.WriteString(w.w, ansi.ResetHyperlink())
 	}
 }
@@ -161,10 +161,10 @@ func (w *IndentWriter) resetPen() {
 func (w *IndentWriter) restorePen() {
 	style := w.pw.Style()
 	link := w.pw.Link()
-	if !style.Empty() {
-		_, _ = io.WriteString(w.w, style.Sequence())
+	if !style.IsZero() {
+		_, _ = io.WriteString(w.w, style.String())
 	}
-	if !link.Empty() {
+	if !link.IsZero() {
 		_, _ = io.WriteString(w.w, ansi.SetHyperlink(link.URL, link.Params))
 	}
 }

@@ -7,7 +7,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/charmbracelet/lipgloss/v2"
+	"charm.land/lipgloss/v2"
 	"github.com/charmbracelet/x/ansi"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
@@ -61,22 +61,22 @@ func renderText(w io.Writer, rules StylePrimitive, s string) (int, error) { //no
 		style = style.BackgroundColor(lipgloss.Color(*rules.BackgroundColor))
 	}
 	if rules.Underline != nil && *rules.Underline {
-		style = style.Underline()
+		style = style.Underline(true)
 	}
 	if rules.Bold != nil && *rules.Bold {
 		style = style.Bold()
 	}
 	if rules.Italic != nil && *rules.Italic {
-		style = style.Italic()
+		style = style.Italic(true)
 	}
 	if rules.CrossedOut != nil && *rules.CrossedOut {
-		style = style.Strikethrough()
+		style = style.Strikethrough(true)
 	}
 	if rules.Inverse != nil && *rules.Inverse {
-		style = style.Reverse()
+		style = style.Reverse(true)
 	}
 	if rules.Blink != nil && *rules.Blink {
-		style = style.SlowBlink()
+		style = style.Blink(true)
 	}
 
 	n, err := io.WriteString(w, style.Styled(s))
