@@ -291,10 +291,12 @@ func (tr *ANSIRenderer) NewElement(node ast.Node, source []byte) Element {
 				SkipHref: true,
 			}
 		} else {
+			isEmail := n.AutoLinkType == ast.AutoLinkEmail
 			renderer = &LinkElement{
 				Children: children,
 				URL:      u,
-				SkipText: n.AutoLinkType != ast.AutoLinkEmail,
+				SkipText: !isEmail, // For non-email links, skip text (show only href)
+				SkipHref: isEmail,  // For email links, skip href (hide mailto: URL)
 			}
 		}
 		return Element{Renderer: renderer}
