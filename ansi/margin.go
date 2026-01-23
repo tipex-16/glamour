@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"strings"
+	"unicode/utf8"
 
 	"charm.land/lipgloss/v2"
 	"github.com/charmbracelet/x/ansi"
@@ -91,8 +92,10 @@ func NewPaddingWriter(w io.Writer, padding int, padFunc PaddingFunc) *PaddingWri
 
 // Write writes to the padding writer.
 func (w *PaddingWriter) Write(p []byte) (int, error) {
-	for i := 0; i < len(p); i++ {
-		if p[i] == '\n' { //nolint:nestif
+	// Use UTF-8 aware iteration to properly handle multi-byte characters (e.g., CJK)
+	for i := 0; i < len(p); {
+		r, size := utf8.DecodeRune(p[i:])
+		if r == '\n' { //nolint:nestif
 			line := w.cache.String()
 			linew := ansi.StringWidth(line)
 			if w.Padding > 0 && linew < w.Padding {
@@ -109,13 +112,16 @@ func (w *PaddingWriter) Write(p []byte) (int, error) {
 			}
 			w.cache.Reset()
 		} else {
-			w.cache.WriteByte(p[i])
+			// Write complete UTF-8 character bytes to cache
+			w.cache.Write(p[i : i+size])
 		}
 
-		_, err := w.w.Write(p[i : i+1])
+		// Write complete UTF-8 character bytes to output
+		_, err := w.w.Write(p[i : i+size])
 		if err != nil {
 			return 0, fmt.Errorf("glamour: error writing bytes: %w", err)
 		}
+		i += size
 	}
 
 	return len(p), nil
@@ -174,11 +180,13 @@ func (w *IndentWriter) restorePen() {
 
 // Write writes to the indentation writer.
 func (w *IndentWriter) Write(p []byte) (int, error) {
-	for i := 0; i < len(p); i++ {
+	// Use UTF-8 aware iteration to properly handle multi-byte characters (e.g., CJK)
+	for i := 0; i < len(p); {
+		r, size := utf8.DecodeRune(p[i:])
 		if !w.skipIndent {
 			w.resetPen()
 			if w.IndentFunc != nil {
-				for i := 0; i < w.Indent; i++ {
+				for j := 0; j < w.Indent; j++ {
 					w.IndentFunc(w.pw)
 				}
 			} else {
@@ -192,14 +200,16 @@ func (w *IndentWriter) Write(p []byte) (int, error) {
 			w.restorePen()
 		}
 
-		if p[i] == '\n' {
+		if r == '\n' {
 			w.skipIndent = false
 		}
 
-		_, err := w.pw.Write(p[i : i+1])
+		// Write complete UTF-8 character bytes to output
+		_, err := w.pw.Write(p[i : i+size])
 		if err != nil {
 			return 0, fmt.Errorf("glamour: error writing bytes: %w", err)
 		}
+		i += size
 	}
 
 	return len(p), nil
